@@ -1,0 +1,16 @@
+.sponsor-card {
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  text-align: center;
+}
+
+.sponsor-image {
+  max-width: 100%;
+  height: auto;
+  margin-bottom: 0.5rem;
+}
+
+.sponsor-name {
+  font-weight: bold;
+}
