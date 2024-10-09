@@ -12,7 +12,7 @@ app.get('/api/sponsors', async (req, res) => {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
 
-    await page.goto('https://www.kisacoresearch.com/events/memorycon/partners', {
+    await page.goto('https://mill-all.com/millennium-sponsorships/', {
       waitUntil: 'networkidle0',
     });
 
