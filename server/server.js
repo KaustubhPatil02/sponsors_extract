@@ -12,20 +12,37 @@ app.get('/api/sponsors', async (req, res) => {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
 
-    await page.goto('https://mill-all.com/millennium-sponsorships/', {
+    await page.goto('https://oxfordglobal.com/cell/sponsors/', {
       waitUntil: 'networkidle0',
+      timeout: 30000,
     });
 
     // Extracting images without specific CSS selectors
     const sponsors = await page.evaluate(() => {
       const imgs = Array.from(document.images); // Get all image elements
+
+      // Define keywords for filtering relevant sponsor images
+      const keywords = ['sponsor', 'our-sponsors', 'partners', 'partnership', 'partners-with'];
+
+      const uniqueImages = new Set(); // Store unique image URLs
       return imgs
         .map((img, index) => ({
           id: index + 1,
           name: img.alt || `Sponsor ${index + 1}`,
           imageUrl: img.src,
         }))
-        .filter(sponsor => sponsor.imageUrl.includes('/wp-content/uploads/') && sponsor.name.includes('sponsor')); // Filter for sponsor images
+        .filter(sponsor => {
+          // Check if any keyword appears in the alt text or image URL
+          const isKeywordInName = keywords.some(keyword => sponsor.name.toLowerCase().includes(keyword));
+          const isKeywordInUrl = keywords.some(keyword => sponsor.imageUrl.toLowerCase().includes(keyword));
+
+          // Only add to Set if it matches the keywords and is unique
+          if ((isKeywordInName || isKeywordInUrl) && !uniqueImages.has(sponsor.imageUrl)) {
+            uniqueImages.add(sponsor.imageUrl); // Add to Set to keep track
+            return true;
+          }
+          return false;
+        });
     });
 
     console.log('Extracted sponsors:', sponsors);
